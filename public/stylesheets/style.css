@@ -9,3 +9,5 @@ header, nav, section { background: #eee; text-align:center; }
 footer { background: #eee; text-align:center; }
 nav span { margin: 0px 10px 0px 0px; }
 a { color: #00B7FF; }
+.authorFoto{ float:left; width:10%; }
+.authorFoto{ float:left; width:30%; }
