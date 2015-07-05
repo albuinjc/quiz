@@ -1,6 +1,10 @@
 // Importamos el modelo
 var models = require ('../models/models.js')
 
+var getTematicas = function(){
+	return ["Otro", "Humanidades", "Ocio", "Ciencia","Tecnología"];
+};
+
 // Autoload´- factoriza el codigo si ruta incluye :quizId
 exports.load=function( req, res, next, quizId){
 	models.Quiz.find(quizId).then(
@@ -50,9 +54,9 @@ exports.answer = function (req, res){
 //GET /quizes/new
 exports.new = function (req, res){
 	var quiz = models.Quiz.build ( 	// Crea objeto quiz 
-		{pregunta: "Pregunta", respuesta: "Respuesta"}
+		{pregunta: "Pregunta", respuesta: "Respuesta", tematica: "Otro"}
 	);
-	res.render('quizes/new',{quiz: quiz, errors: []});
+	res.render('quizes/new',{quiz: quiz, tematicas: getTematicas(), errors: []});
 };
 
 //POST /quizes/create
@@ -65,7 +69,7 @@ exports.create = function (req, res){
 				res.render('quizes/new', {quiz: quiz, errors: err.errors});
 			} else {
 				// Guarda en DB los campos pregunta y respuesta de quiz
-				quiz.save({fields:["pregunta","respuesta"]}).then(
+				quiz.save({fields:["pregunta","respuesta","tematica"]}).then(
 					function(){ res.redirect('/quizes');}
 				); // Redirecciona HTTP (URL relativo) lista de preguntas
 			}
@@ -77,13 +81,14 @@ exports.create = function (req, res){
 exports.edit = function(req,res){
 	var quiz = req.quiz; //autoload de instancia de quiz
 	
-	res.render('quizes/edit', {quiz: quiz, errors: []});
+	res.render('quizes/edit', {quiz: quiz, tematicas: getTematicas(), errors: []});
 };
 
 //PUT /quizes/:id
 exports.update = function (req, res) {
 	req.quiz.pregunta = req.body.quiz.pregunta;
 	req.quiz.respuesta = req.body.quiz.respuesta;
+	req.quiz.tematica = req.body.quiz.tematica;
 	
 	req.quiz.validate().then(
 		function(err){
@@ -91,7 +96,7 @@ exports.update = function (req, res) {
 				res.render('quizes/edit', {quiz: req.quiz, errors: err.errors});
 			} else {
 				// Guarda campos pregunta y respuesta en la DB
-				req.quiz.save({fields:["pregunta","respuesta"]}).then(
+				req.quiz.save({fields:["pregunta","respuesta","tematica"]}).then(
 					function(){ res.redirect('/quizes');}
 				); // Redirecciona HTTP lista de preguntas (URL relativo)
 			}
