@@ -39,6 +39,21 @@ app.use(function(req, res, next){
     next();
 });
 
+// Controlamos el tiempo de session a 2 minutos
+app.use(function(req, res, next) {
+  var now = new Date();
+  if (req.session.lastAccess){
+    if ( now.getTime() - req.session.lastAccess > 1000*60*2){ // 2 minutos
+      // Pasaron x minutos de inactividad y destruimos sesion
+      delete req.session.user;
+    }
+  }
+  // Guardamos el ultimo acceso
+  req.session.lastAccess = now.getTime();
+  next();
+});
+
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
